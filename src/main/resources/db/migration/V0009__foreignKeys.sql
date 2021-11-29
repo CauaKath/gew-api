@@ -15,3 +15,9 @@ FOREIGN KEY (funcionario_cracha) REFERENCES funcionarios(numero_cracha);
 
 ALTER TABLE funcionarios_secoes ADD CONSTRAINT fk_secao_id
 FOREIGN KEY (secao_id) REFERENCES secoes(id);
+
+ALTER TABLE cargos_funcionarios ADD CONSTRAINT fk_funcionario_cargo
+FOREIGN KEY (funcionario_cracha) REFERENCES funcionarios(numero_cracha);
+
+ALTER TABLE cargos_funcionarios ADD CONSTRAINT fk_cargo_id
+FOREIGN KEY (cargo_id) REFERENCES cargos(id);
