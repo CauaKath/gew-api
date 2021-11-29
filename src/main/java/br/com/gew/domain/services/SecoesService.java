@@ -8,11 +8,16 @@ import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Service
-public class SecaoService {
+public class SecoesService {
 
     private SecoesRepository secoesRepository;
 
     private FuncionariosSecoesService funcionariosSecoesService;
+
+    public Secao buscar(long id) {
+        return secoesRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Seção não encontrada"));
+    }
 
     public Secao buscarPorFuncionario(long funcionarioCracha) {
         return secoesRepository.findById(
@@ -20,9 +25,10 @@ public class SecaoService {
         ).orElseThrow(() -> new EntityNotFoundException("Seção não encontrada para este funcionário"));
     }
 
-    public Secao buscar(long id) {
-        return secoesRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Seção não encontrada"));
+    public Secao buscarPorNome(String nome) {
+        return secoesRepository
+                .findByNome(nome)
+                .orElseThrow(() -> new EntityNotFoundException("Seção com esse nome não encontrada"));
     }
 
 }

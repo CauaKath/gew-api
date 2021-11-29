@@ -32,4 +32,10 @@ public class Funcionario {
             inverseJoinColumns = @JoinColumn(name = "secao_id", referencedColumnName = "id"))
     private List<Secao> secoes;
 
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "cargos_funcionarios", joinColumns = @JoinColumn(name = "funcionario_cracha", referencedColumnName = "numero_cracha"),
+            inverseJoinColumns = @JoinColumn(name = "cargo_id", referencedColumnName = "id"))
+    private List<Cargo> cargos;
+
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Service
-public class ProjetoService {
+public class ProjetosService {
 
     private ProjetosRepository projetosRepository;
 

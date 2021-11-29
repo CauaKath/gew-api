@@ -5,7 +5,7 @@ import br.com.gew.api.model.input.DespesaInputDTO;
 import br.com.gew.api.model.output.DespesaOutputDTO;
 import br.com.gew.domain.entities.Despesa;
 import br.com.gew.domain.services.DespesasService;
-import br.com.gew.domain.services.ProjetoService;
+import br.com.gew.domain.services.ProjetosService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +13,13 @@ import java.util.List;
 
 @AllArgsConstructor
 @Service
-public class DespesaUtils {
+public class DespesasUtils {
 
     private DespesaAssembler despesaAssembler;
 
     private DespesasService despesasService;
 
-    private ProjetoService projetoService;
+    private ProjetosService projetosService;
 
     public double cadastrar(
             List<DespesaInputDTO> despesaInputDTOS,
@@ -28,7 +28,7 @@ public class DespesaUtils {
         List<Despesa> despesas = despesaAssembler.toCollectionEntity(despesaInputDTOS);
 
         for (Despesa despesa : despesas) {
-            despesa.setProjeto(projetoService.buscar(numeroDoProjeto));
+            despesa.setProjeto(projetosService.buscar(numeroDoProjeto));
 
             despesasService.cadastrar(despesa);
         }
@@ -58,18 +58,18 @@ public class DespesaUtils {
     ) throws Exception {
         List<Despesa> despesas = despesaAssembler.toCollectionEntity(despesaInputDTOS);
         List<Despesa> despesasDB = despesasService.listarPorProjeto(
-                projetoService.buscar(numeroDoProjeto).getId()
+                projetosService.buscar(numeroDoProjeto).getId()
         );
 
         for (int i = 0; i < despesasDB.size(); i ++) {
-            despesas.get(i).setProjeto(projetoService.buscar(numeroDoProjeto));
+            despesas.get(i).setProjeto(projetosService.buscar(numeroDoProjeto));
 
             despesasService.editar(despesas.get(i), despesasDB.get(i).getId());
         }
 
         if (despesas.size() > despesasDB.size()) {
             for (int i = despesasDB.size(); i < despesas.size(); i ++) {
-                despesas.get(i).setProjeto(projetoService.buscar(numeroDoProjeto));
+                despesas.get(i).setProjeto(projetosService.buscar(numeroDoProjeto));
 
                 despesasService.cadastrar(despesas.get(i));
             }
@@ -80,7 +80,7 @@ public class DespesaUtils {
 
     public void remover(long numeroDoProjeto) throws Exception {
         List<Despesa> despesasDB = despesasService.listarPorProjeto(
-                projetoService.buscar(numeroDoProjeto).getId()
+                projetosService.buscar(numeroDoProjeto).getId()
         );
 
         for (Despesa despesa : despesasDB) {

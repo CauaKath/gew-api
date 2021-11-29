@@ -7,10 +7,10 @@ import br.com.gew.api.model.output.ProjetoConcluidosPorDiaOutputDTO;
 import br.com.gew.api.model.output.ProjetoDataOutputDTO;
 import br.com.gew.api.model.output.ProjetoOutputDTO;
 import br.com.gew.domain.entities.Projeto;
-import br.com.gew.domain.services.ProjetoService;
-import br.com.gew.domain.utils.DespesaUtils;
+import br.com.gew.domain.services.ProjetosService;
+import br.com.gew.domain.utils.DespesasUtils;
 import br.com.gew.domain.utils.ProjetoContagemUtils;
-import br.com.gew.domain.utils.ProjetoUtils;
+import br.com.gew.domain.utils.ProjetosUtils;
 import br.com.gew.domain.utils.SecoesPagantesUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +23,13 @@ import java.util.List;
 @RequestMapping("/projetos")
 public class ProjetoController {
 
-    private ProjetoService projetoService;
+    private ProjetosService projetosService;
 
     private ProjetoAssembler projetoAssembler;
 
-    private ProjetoUtils projetoUtils;
+    private ProjetosUtils projetosUtils;
     private SecoesPagantesUtils secoesPagantesUtils;
-    private DespesaUtils despesaUtils;
+    private DespesasUtils despesasUtils;
     private ProjetoContagemUtils projetoContagemUtils;
 
     @PostMapping
@@ -37,15 +37,15 @@ public class ProjetoController {
             @RequestBody ProjetoInputDTO projetoInputDTO
     ) throws Exception {
 
-        if (!projetoUtils.verifyExceptionCadastro(projetoInputDTO)) {
+        if (!projetosUtils.verifyExceptionCadastro(projetoInputDTO)) {
             return ResponseEntity.badRequest().build();
         }
 
-        Projeto novoProjeto = projetoUtils.setDadosPadrao(projetoInputDTO.getProjetoData());
+        Projeto novoProjeto = projetosUtils.setDadosPadrao(projetoInputDTO.getProjetoData());
 
-        Projeto projeto = projetoService.cadastrar(novoProjeto);
+        Projeto projeto = projetosService.cadastrar(novoProjeto);
 
-        double totalDespesas = despesaUtils.cadastrar(projetoInputDTO.getDespesas(), projeto.getNumeroDoProjeto());
+        double totalDespesas = despesasUtils.cadastrar(projetoInputDTO.getDespesas(), projeto.getNumeroDoProjeto());
 
         secoesPagantesUtils.cadastrar(projetoInputDTO.getSecoesPagantes(),
                 projeto.getNumeroDoProjeto(), totalDespesas);
@@ -55,7 +55,7 @@ public class ProjetoController {
 
     @GetMapping
     public ResponseEntity<List<ProjetoOutputDTO>> listar() throws Exception {
-        return ResponseEntity.ok(projetoUtils.listar());
+        return ResponseEntity.ok(projetosUtils.listar());
     }
 
     @GetMapping("/count")
@@ -72,7 +72,7 @@ public class ProjetoController {
     public ResponseEntity<ProjetoOutputDTO> buscar(
             @PathVariable long numeroDoProjeto
     ) throws Exception {
-        return ResponseEntity.ok(projetoUtils.buscar(numeroDoProjeto));
+        return ResponseEntity.ok(projetosUtils.buscar(numeroDoProjeto));
     }
 
     @PutMapping("/{numeroDoProjeto}")
@@ -80,11 +80,15 @@ public class ProjetoController {
             @RequestBody ProjetoInputDTO projetoInputDTO,
             @PathVariable long numeroDoProjeto
     ) throws Exception {
-        Projeto novoProjeto = projetoUtils.setDatabaseData(projetoInputDTO.getProjetoData(), numeroDoProjeto);
+        if (!projetosUtils.verifyExceptionEdicao(projetoInputDTO, numeroDoProjeto)) {
+            return ResponseEntity.badRequest().build();
+        }
 
-        Projeto projeto = projetoService.editar(novoProjeto, numeroDoProjeto);
+        Projeto novoProjeto = projetosUtils.setDatabaseData(projetoInputDTO.getProjetoData(), numeroDoProjeto);
 
-        double totalDespesas = despesaUtils.editar(projetoInputDTO.getDespesas(), numeroDoProjeto);
+        Projeto projeto = projetosService.editar(novoProjeto, numeroDoProjeto);
+
+        double totalDespesas = despesasUtils.editar(projetoInputDTO.getDespesas(), numeroDoProjeto);
 
         secoesPagantesUtils.editar(projetoInputDTO.getSecoesPagantes(), numeroDoProjeto, totalDespesas);
 
@@ -96,11 +100,11 @@ public class ProjetoController {
             @PathVariable long numeroDoProjeto
     ) throws Exception {
 
-        despesaUtils.remover(numeroDoProjeto);
+        despesasUtils.remover(numeroDoProjeto);
 
         secoesPagantesUtils.remover(numeroDoProjeto);
 
-        return projetoUtils.remover(numeroDoProjeto);
+        return projetosUtils.remover(numeroDoProjeto);
     }
 
 }

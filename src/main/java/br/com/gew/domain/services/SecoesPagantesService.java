@@ -10,7 +10,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Service
-public class SecaoPaganteService {
+public class SecoesPagantesService {
 
     private SecoesPagantesRepository secoesPagantesRepository;
 

@@ -15,8 +15,8 @@ public class CargoFuncionario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private long funcionarioCracha;
+    private long funcionario_cracha;
 
-    private long cargoId;
+    private long cargo_id;
 
 }

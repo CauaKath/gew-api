@@ -7,8 +7,8 @@ import br.com.gew.api.model.output.ProjetoVerbaOutputDTO;
 import br.com.gew.domain.entities.Projeto;
 import br.com.gew.domain.entities.SecaoPagante;
 import br.com.gew.domain.entities.StatusProjeto;
-import br.com.gew.domain.services.ProjetoService;
-import br.com.gew.domain.services.SecaoPaganteService;
+import br.com.gew.domain.services.ProjetosService;
+import br.com.gew.domain.services.SecoesPagantesService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +20,8 @@ import java.util.List;
 @Service
 public class ProjetoContagemUtils {
 
-    private ProjetoService projetoService;
-    private SecaoPaganteService secaoPaganteService;
+    private ProjetosService projetosService;
+    private SecoesPagantesService secoesPagantesService;
 
     public ContagemOutputDTO contar() throws Exception {
         ContagemOutputDTO contagem = new ContagemOutputDTO();
@@ -35,10 +35,10 @@ public class ProjetoContagemUtils {
     private ProjetoContagemOutputDTO contarPorStatus() throws Exception {
         ProjetoContagemOutputDTO projetoContagem = new ProjetoContagemOutputDTO();
 
-        projetoContagem.setConcluidos(projetoService.listarPorStatus(StatusProjeto.CONCLUIDO).size());
-        projetoContagem.setAtrasados(projetoService.listarPorStatus(StatusProjeto.ATRASADO).size());
-        projetoContagem.setEmAndamento(projetoService.listarPorStatus(StatusProjeto.EM_ANDAMENTO).size());
-        projetoContagem.setTotal(projetoService.listar().size());
+        projetoContagem.setConcluidos(projetosService.listarPorStatus(StatusProjeto.CONCLUIDO).size());
+        projetoContagem.setAtrasados(projetosService.listarPorStatus(StatusProjeto.ATRASADO).size());
+        projetoContagem.setEmAndamento(projetosService.listarPorStatus(StatusProjeto.EM_ANDAMENTO).size());
+        projetoContagem.setTotal(projetosService.listar().size());
 
         return projetoContagem;
     }
@@ -56,10 +56,10 @@ public class ProjetoContagemUtils {
 
     private double contarVerbaPorStatus(StatusProjeto statusProjeto) throws Exception {
         double total = 0;
-        List<Projeto> projetos = projetoService.listarPorStatus(statusProjeto);
+        List<Projeto> projetos = projetosService.listarPorStatus(statusProjeto);
 
         for (Projeto projeto : projetos) {
-            List<SecaoPagante> secaoPagantes = secaoPaganteService.listarPorProjeto(projeto.getId());
+            List<SecaoPagante> secaoPagantes = secoesPagantesService.listarPorProjeto(projeto.getId());
 
             for (SecaoPagante secaoPagante : secaoPagantes) {
                 total += secaoPagante.getValor();
@@ -91,7 +91,7 @@ public class ProjetoContagemUtils {
     }
 
     private List<Projeto> buscarProjetos(LocalDate data) {
-        return projetoService.listarPorDataConclusao(data);
+        return projetosService.listarPorDataConclusao(data);
     }
 
 }
