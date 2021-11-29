@@ -2,11 +2,14 @@ package br.com.gew.api.controller;
 
 import br.com.gew.api.assembler.ProjetoAssembler;
 import br.com.gew.api.model.input.ProjetoInputDTO;
+import br.com.gew.api.model.output.ContagemOutputDTO;
+import br.com.gew.api.model.output.ProjetoConcluidosPorDiaOutputDTO;
 import br.com.gew.api.model.output.ProjetoDataOutputDTO;
 import br.com.gew.api.model.output.ProjetoOutputDTO;
 import br.com.gew.domain.entities.Projeto;
 import br.com.gew.domain.services.ProjetoService;
 import br.com.gew.domain.utils.DespesaUtils;
+import br.com.gew.domain.utils.ProjetoContagemUtils;
 import br.com.gew.domain.utils.ProjetoUtils;
 import br.com.gew.domain.utils.SecoesPagantesUtils;
 import lombok.AllArgsConstructor;
@@ -27,6 +30,7 @@ public class ProjetoController {
     private ProjetoUtils projetoUtils;
     private SecoesPagantesUtils secoesPagantesUtils;
     private DespesaUtils despesaUtils;
+    private ProjetoContagemUtils projetoContagemUtils;
 
     @PostMapping
     public ResponseEntity<ProjetoDataOutputDTO> cadastrar(
@@ -52,6 +56,16 @@ public class ProjetoController {
     @GetMapping
     public ResponseEntity<List<ProjetoOutputDTO>> listar() throws Exception {
         return ResponseEntity.ok(projetoUtils.listar());
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<ContagemOutputDTO> contarPorStatus() throws Exception {
+        return ResponseEntity.ok(projetoContagemUtils.contar());
+    }
+
+    @GetMapping("/count/last-seven")
+    public ResponseEntity<List<ProjetoConcluidosPorDiaOutputDTO>> contarUltimosDias() throws Exception {
+        return ResponseEntity.ok(projetoContagemUtils.concluidosUltimosDias());
     }
 
     @GetMapping("/{numeroDoProjeto}")
