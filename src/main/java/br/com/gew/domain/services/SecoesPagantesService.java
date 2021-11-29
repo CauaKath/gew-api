@@ -5,6 +5,7 @@ import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.repositories.SecoesPagantesRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class SecoesPagantesService {
 
     private SecoesPagantesRepository secoesPagantesRepository;
 
+    @Transactional
     public SecaoPagante cadastrar(SecaoPagante secaoPagante) throws Exception {
         try {
             return secoesPagantesRepository.save(secaoPagante);
@@ -30,6 +32,7 @@ public class SecoesPagantesService {
         }
     }
 
+    @Transactional
     public SecaoPagante editar(
             SecaoPagante secaoPagante,
             long secao_pagante_id

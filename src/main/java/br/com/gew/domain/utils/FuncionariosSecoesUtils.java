@@ -1,6 +1,7 @@
 package br.com.gew.domain.utils;
 
 import br.com.gew.domain.entities.FuncionarioSecao;
+import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.services.FuncionariosSecoesService;
 import br.com.gew.domain.services.SecoesService;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,16 @@ public class FuncionariosSecoesUtils {
         funcionarioSecao.setFuncionario_cracha(funcionarioCracha);
 
         funcionariosSecoesService.editar(funcionarioSecao);
+    }
+
+    public void remover(long funcionarioCracha) throws Exception {
+        if (funcionariosSecoesService.buscarPorFuncionario(funcionarioCracha) == null) {
+            throw new ExceptionTratement("Funcionário não possui seção");
+        }
+
+        long id = funcionariosSecoesService.buscarPorFuncionario(funcionarioCracha).getId();
+
+        funcionariosSecoesService.remover(id);
     }
 
 }

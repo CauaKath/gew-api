@@ -5,6 +5,7 @@ import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.repositories.DespesasRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class DespesasService {
 
     private DespesasRepository despesasRepository;
 
+    @Transactional
     public Despesa cadastrar(Despesa despesa) throws Exception {
         try {
             return despesasRepository.save(despesa);
@@ -30,6 +32,7 @@ public class DespesasService {
         }
     }
 
+    @Transactional
     public Despesa editar(Despesa despesa, long despesa_id) throws Exception {
         try {
             despesa.setId(despesa_id);

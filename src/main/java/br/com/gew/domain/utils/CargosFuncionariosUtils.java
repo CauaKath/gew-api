@@ -1,6 +1,7 @@
 package br.com.gew.domain.utils;
 
 import br.com.gew.domain.entities.CargoFuncionario;
+import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.services.CargosFuncionariosService;
 import br.com.gew.domain.services.CargosService;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,16 @@ public class CargosFuncionariosUtils {
         cargoFuncionario.setFuncionario_cracha(funcionarioCracha);
 
         cargosFuncionariosService.editar(cargoFuncionario);
+    }
+
+    public void remover(long funcionarioCracha) throws Exception {
+        if (cargosFuncionariosService.buscarPorFuncionario(funcionarioCracha).isEmpty()) {
+            throw new ExceptionTratement("Funcionário não possui cargo");
+        }
+
+        long id = cargosFuncionariosService.buscarPorFuncionario(funcionarioCracha).get().getId();
+
+        cargosFuncionariosService.remover(id);
     }
 
 }

@@ -7,6 +7,7 @@ import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.repositories.ProjetosRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,6 +18,7 @@ public class ProjetosService {
 
     private ProjetosRepository projetosRepository;
 
+    @Transactional
     public Projeto cadastrar(Projeto projeto) throws Exception {
         try {
             return projetosRepository.save(projeto);
@@ -54,6 +56,7 @@ public class ProjetosService {
         }
     }
 
+    @Transactional
     public Projeto editar(Projeto projeto, long numeroDoProjeto) throws Exception {
         projeto.setId(
                 projetosRepository.findByNumeroDoProjeto(numeroDoProjeto).get().getId()

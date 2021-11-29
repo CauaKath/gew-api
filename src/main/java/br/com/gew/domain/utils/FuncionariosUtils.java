@@ -2,11 +2,13 @@ package br.com.gew.domain.utils;
 
 import br.com.gew.api.model.input.FuncionarioDataInputDTO;
 import br.com.gew.api.model.input.FuncionarioInputDTO;
+import br.com.gew.api.model.output.FuncionarioOutputDTO;
 import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.services.CargosService;
 import br.com.gew.domain.services.FuncionariosService;
 import br.com.gew.domain.services.SecoesService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
@@ -136,6 +138,16 @@ public class FuncionariosUtils {
         ) == null) {
             throw new ExceptionTratement("Seção informada não encontrada");
         }
+    }
+
+    public ResponseEntity<FuncionarioOutputDTO> remover(long numeroCracha) throws Exception {
+        if (!funcionariosService.buscar(numeroCracha).isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        funcionariosService.remover(numeroCracha);
+
+        return ResponseEntity.ok().build();
     }
 
 }

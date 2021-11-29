@@ -1,9 +1,11 @@
 package br.com.gew.domain.services;
 
+import br.com.gew.api.model.output.FuncionarioOutputDTO;
 import br.com.gew.domain.entities.Funcionario;
 import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.repositories.FuncionariosRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,11 +67,20 @@ public class FuncionariosService {
         }
     }
 
+    @Transactional
     public Funcionario editar(Funcionario funcionario, long numeroCracha) {
         try {
             funcionario.setNumero_cracha(numeroCracha);
 
             return funcionariosRepository.save(funcionario);
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
+    }
+
+    public void remover(long numeroCracha) {
+        try {
+            funcionariosRepository.deleteById(numeroCracha);
         } catch (Exception ex) {
             throw new ExceptionTratement("Error: " + ex);
         }

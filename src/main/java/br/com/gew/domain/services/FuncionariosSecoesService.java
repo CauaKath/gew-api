@@ -24,8 +24,11 @@ public class FuncionariosSecoesService {
     }
 
     public FuncionarioSecao buscarPorFuncionario(long funcionarioCracha) {
-        return funcionariosSecoesRepository.findByFuncionarioCracha(funcionarioCracha)
-                .orElseThrow(() -> new EntityNotFoundException("Funcionario não pertence a nenhuma seção"));
+        try {
+            return funcionariosSecoesRepository.findByFuncionarioCracha(funcionarioCracha).get();
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
     }
 
     @Transactional
@@ -34,6 +37,14 @@ public class FuncionariosSecoesService {
     ) throws Exception {
         try {
             return funcionariosSecoesRepository.save(funcionarioSecao);
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
+    }
+
+    public void remover(long id) {
+        try {
+            funcionariosSecoesRepository.deleteById(id);
         } catch (Exception ex) {
             throw new ExceptionTratement("Error: " + ex);
         }

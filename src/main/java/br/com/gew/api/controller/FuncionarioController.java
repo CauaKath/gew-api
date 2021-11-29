@@ -57,12 +57,12 @@ public class FuncionarioController {
                 funcionarioAssembler.toCollectionModel(funcionariosService.listar()));
     }
 
-    @GetMapping("/{numero_cracha}")
+    @GetMapping("/{numeroCracha}")
     public ResponseEntity<FuncionarioOutputDTO> buscar(
-        @PathVariable long numero_cracha
+        @PathVariable long numeroCracha
     ) throws Exception {
         return ResponseEntity.ok(
-                funcionarioAssembler.toModel(funcionariosService.buscar(numero_cracha).get()));
+                funcionarioAssembler.toModel(funcionariosService.buscar(numeroCracha).get()));
     }
 
     @PutMapping("/{numeroCracha}")
@@ -88,6 +88,17 @@ public class FuncionarioController {
         );
 
         return ResponseEntity.ok(funcionarioAssembler.toModel(funcionario));
+    }
+
+    @DeleteMapping("/{numeroCracha}")
+    public ResponseEntity<FuncionarioOutputDTO> remover(
+            @PathVariable long numeroCracha
+    ) throws Exception {
+        cargosFuncionariosUtils.remover(numeroCracha);
+
+        funcionariosSecoesUtils.remover(numeroCracha);
+
+        return funcionariosUtils.remover(numeroCracha);
     }
 
 }
