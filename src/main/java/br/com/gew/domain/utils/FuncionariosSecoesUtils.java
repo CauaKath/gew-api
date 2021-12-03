@@ -14,7 +14,7 @@ public class FuncionariosSecoesUtils {
     private FuncionariosSecoesService funcionariosSecoesService;
     private SecoesService secoesService;
 
-    public void cadastrar(String secaoNome, long funcionarioCracha) throws Exception {
+    public void cadastrar(String secaoNome, long funcionarioCracha) throws ExceptionTratement {
         FuncionarioSecao funcionarioSecao = new FuncionarioSecao();
 
         funcionarioSecao.setSecao_id(
@@ -25,7 +25,7 @@ public class FuncionariosSecoesUtils {
         funcionariosSecoesService.cadastrar(funcionarioSecao);
     }
 
-    public void editar(String secaoNome, long funcionarioCracha) throws Exception {
+    public void editar(String secaoNome, long funcionarioCracha) throws ExceptionTratement {
         FuncionarioSecao funcionarioSecao = new FuncionarioSecao();
 
         funcionarioSecao.setSecao_id(
@@ -36,7 +36,7 @@ public class FuncionariosSecoesUtils {
         funcionariosSecoesService.editar(funcionarioSecao);
     }
 
-    public void remover(long funcionarioCracha) throws Exception {
+    public void remover(long funcionarioCracha) throws ExceptionTratement {
         if (funcionariosSecoesService.buscarPorFuncionario(funcionarioCracha) == null) {
             throw new ExceptionTratement("Funcionário não possui seção");
         }

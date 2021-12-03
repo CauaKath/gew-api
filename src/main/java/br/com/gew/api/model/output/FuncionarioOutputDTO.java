@@ -13,4 +13,6 @@ public class FuncionarioOutputDTO {
 
     private String email;
 
+    private double valor_hora;
+
 }

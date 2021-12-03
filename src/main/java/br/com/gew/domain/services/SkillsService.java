@@ -1,50 +1,50 @@
 package br.com.gew.domain.services;
 
-import br.com.gew.domain.entities.CargoFuncionario;
+import br.com.gew.domain.entities.Skill;
 import br.com.gew.domain.exception.EntityNotFoundException;
 import br.com.gew.domain.exception.ExceptionTratement;
-import br.com.gew.domain.repositories.CargosFuncionariosRepository;
+import br.com.gew.domain.repositories.SkillsRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
-public class CargosFuncionariosService {
+public class SkillsService {
 
-    private CargosFuncionariosRepository cargosFuncionariosRepository;
-
-    @Transactional
-    public CargoFuncionario cadastrar(CargoFuncionario cargoFuncionario) throws ExceptionTratement {
-        try {
-            return cargosFuncionariosRepository.save(cargoFuncionario);
-        } catch (Exception ex) {
-            throw new ExceptionTratement("Error: " + ex);
-        }
-    }
-
-    public CargoFuncionario buscarPorFuncionario(long numeroCracha) throws EntityNotFoundException {
-        try {
-            return cargosFuncionariosRepository.findByFuncionarioCracha(numeroCracha).get();
-        } catch (Exception ex) {
-            throw new ExceptionTratement("Error: " + ex);
-        }
-    }
-
-    public List<CargoFuncionario> listarPorCargo(long cargo_id) throws ExceptionTratement {
-        try {
-            return cargosFuncionariosRepository.findAllByCargoId(cargo_id);
-        } catch (Exception ex) {
-            throw new ExceptionTratement("Error: " + ex);
-        }
-    }
+    private SkillsRepository skillsRepository;
 
     @Transactional
-    public CargoFuncionario editar(CargoFuncionario cargoFuncionario) throws ExceptionTratement {
+    public Skill cadastrar(Skill skill) throws ExceptionTratement {
         try {
-            return cargosFuncionariosRepository.save(cargoFuncionario);
+            return skillsRepository.save(skill);
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
+    }
+
+    public List<Skill> listar() throws ExceptionTratement {
+        try {
+            return skillsRepository.findAll();
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
+    }
+
+    public Optional<Skill> buscar(long id) throws ExceptionTratement {
+        try {
+            return skillsRepository.findById(id);
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
+    }
+
+    public Optional<Skill> buscarPorNome(String nome) throws ExceptionTratement {
+        try {
+            return skillsRepository.findByNome(nome);
         } catch (Exception ex) {
             throw new ExceptionTratement("Error: " + ex);
         }
@@ -52,7 +52,7 @@ public class CargosFuncionariosService {
 
     public void remover(long id) throws ExceptionTratement {
         try {
-            cargosFuncionariosRepository.deleteById(id);
+            skillsRepository.deleteById(id);
         } catch (Exception ex) {
             throw new ExceptionTratement("Error: " + ex);
         }

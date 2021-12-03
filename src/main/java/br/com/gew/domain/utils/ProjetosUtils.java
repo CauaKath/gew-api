@@ -8,9 +8,9 @@ import br.com.gew.api.model.input.SecaoPaganteInputDTO;
 import br.com.gew.api.model.output.ProjetoOutputDTO;
 import br.com.gew.domain.entities.Projeto;
 import br.com.gew.domain.entities.StatusProjeto;
+import br.com.gew.domain.exception.EntityNotFoundException;
 import br.com.gew.domain.exception.ExceptionTratement;
-import br.com.gew.domain.repositories.FuncionariosRepository;
-import br.com.gew.domain.repositories.ProjetosRepository;
+import br.com.gew.domain.services.FuncionariosService;
 import br.com.gew.domain.services.ProjetosService;
 import br.com.gew.domain.services.SecoesService;
 import lombok.AllArgsConstructor;
@@ -28,16 +28,14 @@ public class ProjetosUtils {
 
     private ProjetoAssembler projetoAssembler;
 
-    private FuncionariosRepository funcionariosRepository;
-    private ProjetosRepository projetosRepository;
-
     private SecoesService secoesService;
     private ProjetosService projetosService;
+    private FuncionariosService funcionariosService;
 
     private DespesasUtils despesasUtils;
     private SecoesPagantesUtils secoesPagantesUtils;
 
-    public Projeto setDadosPadrao(ProjetoDataInputDTO projetoDataInputDTO) {
+    public Projeto setDadosPadrao(ProjetoDataInputDTO projetoDataInputDTO) throws ExceptionTratement {
         Projeto projeto = projetoAssembler.toEntity(projetoDataInputDTO);
 
         projeto.setStatusProjeto(StatusProjeto.NAO_INICIADO);
@@ -49,9 +47,12 @@ public class ProjetosUtils {
         return projeto;
     }
 
-    public Projeto setDatabaseData(ProjetoDataInputDTO projetoDataInputDTO, long numeroDoProjeto) {
+    public Projeto setDatabaseData(
+            ProjetoDataInputDTO projetoDataInputDTO,
+            long numeroDoProjeto
+    ) throws ExceptionTratement {
         Projeto projeto = projetoAssembler.toEntity(projetoDataInputDTO);
-        Projeto projetoDB = projetosRepository.findByNumeroDoProjeto(numeroDoProjeto).get();
+        Projeto projetoDB = projetosService.buscarPorNumeroProjeto(numeroDoProjeto).get();
 
         projeto.setStatusProjeto(projetoDB.getStatusProjeto());
         projeto.setDataDoCadastro(projetoDB.getDataDoCadastro());
@@ -62,11 +63,14 @@ public class ProjetosUtils {
         return projeto;
     }
 
-    private void setResponsaveis(ProjetoDataInputDTO projetoDataInputDTO, Projeto projeto) {
-        projeto.setResponsavel(funcionariosRepository.findById(
+    private void setResponsaveis(
+            ProjetoDataInputDTO projetoDataInputDTO,
+            Projeto projeto
+    ) throws ExceptionTratement {
+        projeto.setResponsavel(funcionariosService.buscar(
                 projetoDataInputDTO.getCracha_responsavel()
         ).get());
-        projeto.setSolicitante(funcionariosRepository.findById(
+        projeto.setSolicitante(funcionariosService.buscar(
                 projetoDataInputDTO.getCracha_solicitante()
         ).get());
         projeto.setSecao(
@@ -74,7 +78,7 @@ public class ProjetosUtils {
         );
     }
 
-    public List<ProjetoOutputDTO> listar() throws Exception {
+    public List<ProjetoOutputDTO> listar() throws ExceptionTratement {
         List<ProjetoOutputDTO> projetoOutputDTOS = new ArrayList<>();
 
         List<Projeto> projetos = projetosService.listar();
@@ -86,23 +90,29 @@ public class ProjetosUtils {
         return projetoOutputDTOS;
     }
 
-    public ProjetoOutputDTO buscar(long numeroDoProjeto) throws Exception {
-        return montarProjeto(projetosService.buscar(numeroDoProjeto));
+    public ResponseEntity<ProjetoOutputDTO> buscar(long numeroDoProjeto) throws ExceptionTratement {
+        if (projetosService.buscarPorNumeroProjeto(numeroDoProjeto).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(montarProjeto(
+                projetosService.buscarPorNumeroProjeto(numeroDoProjeto).get())
+        );
     }
 
-    public ResponseEntity<ProjetoOutputDTO> remover(long numeroDoProjeto) throws Exception {
-        if (!projetosRepository.findByNumeroDoProjeto(numeroDoProjeto).isPresent()) {
+    public ResponseEntity<ProjetoOutputDTO> remover(long numeroDoProjeto) throws ExceptionTratement {
+        if (projetosService.buscarPorNumeroProjeto(numeroDoProjeto).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         projetosService.remover(
-                projetosRepository.findByNumeroDoProjeto(numeroDoProjeto).get().getId()
+                projetosService.buscarPorNumeroProjeto(numeroDoProjeto).get().getId()
         );
 
         return ResponseEntity.ok().build();
     }
 
-    private ProjetoOutputDTO montarProjeto(Projeto projeto) throws Exception {
+    private ProjetoOutputDTO montarProjeto(Projeto projeto) throws ExceptionTratement {
         ProjetoOutputDTO projetoOutputDTO = new ProjetoOutputDTO();
 
         projetoOutputDTO.setProjetoData(
@@ -120,7 +130,9 @@ public class ProjetosUtils {
         return projetoOutputDTO;
     }
 
-    public boolean verifyExceptionCadastro(ProjetoInputDTO projetoInputDTO) throws Exception {
+    public boolean verifyExceptionCadastro(
+            ProjetoInputDTO projetoInputDTO
+    ) throws ExceptionTratement {
         verifyAlreadyExists(projetoInputDTO.getProjetoData().getNumeroDoProjeto(),
                 projetoInputDTO.getProjetoData().getTitulo());
 
@@ -140,8 +152,12 @@ public class ProjetosUtils {
 
     public boolean verifyExceptionEdicao(
             ProjetoInputDTO projetoInputDTO, long numeroDoProjeto
-    ) throws Exception {
-        long projetoId = projetosRepository.findByNumeroDoProjeto(numeroDoProjeto).get().getId();
+    ) throws ExceptionTratement {
+        if (projetosService.buscarPorNumeroProjeto(numeroDoProjeto).isEmpty()) {
+            throw new EntityNotFoundException("Projeto não encontrado");
+        }
+
+        long projetoId = projetosService.buscarPorNumeroProjeto(numeroDoProjeto).get().getId();
 
         verifyEditAlreadyExists(projetoInputDTO.getProjetoData().getNumeroDoProjeto(),
                 projetoInputDTO.getProjetoData().getTitulo(), projetoId);
@@ -160,15 +176,19 @@ public class ProjetosUtils {
         return true;
     }
 
-    private void verifyAlreadyExists(long numeroDoProjeto, String titulo) throws Exception {
-        boolean numeroDoProjetoValidation = projetosRepository.findByNumeroDoProjeto(
-                numeroDoProjeto).isPresent();
+    private void verifyAlreadyExists(
+            long numeroDoProjeto,
+            String titulo
+    ) throws ExceptionTratement {
+        boolean numeroDoProjetoValidation = projetosService.buscarPorNumeroProjeto(
+                numeroDoProjeto
+        ).isPresent();
 
         if (numeroDoProjetoValidation) {
             throw new ExceptionTratement("Projeto com este número já cadastrado");
         }
 
-        boolean tituloValidation = projetosRepository.findByTitulo(
+        boolean tituloValidation = projetosService.buscarPorTitulo(
                 titulo).isPresent();
 
         if (tituloValidation) {
@@ -176,9 +196,13 @@ public class ProjetosUtils {
         }
     }
 
-    private void verifyEditAlreadyExists(long numeroDoProjeto, String titulo, long projetoId) {
-        if (numeroDoProjeto != projetosRepository.findById(projetoId).get().getNumeroDoProjeto()) {
-            boolean numeroDoProjetoValidation = projetosRepository.findByNumeroDoProjeto(
+    private void verifyEditAlreadyExists(
+            long numeroDoProjeto,
+            String titulo,
+            long projetoId
+    ) throws ExceptionTratement {
+        if (numeroDoProjeto != projetosService.buscar(projetoId).get().getNumeroDoProjeto()) {
+            boolean numeroDoProjetoValidation = projetosService.buscarPorNumeroProjeto(
                     numeroDoProjeto).isPresent();
 
             if (numeroDoProjetoValidation) {
@@ -186,8 +210,8 @@ public class ProjetosUtils {
             }
         }
 
-        if (!Objects.equals(titulo, projetosRepository.findById(projetoId).get().getTitulo())) {
-            boolean tituloValidation = projetosRepository.findByTitulo(
+        if (!Objects.equals(titulo, projetosService.buscar(projetoId).get().getTitulo())) {
+            boolean tituloValidation = projetosService.buscarPorTitulo(
                     titulo).isPresent();
 
             if (tituloValidation) {
@@ -196,13 +220,13 @@ public class ProjetosUtils {
         }
     }
 
-    private void verifyResponsavel(long responsavel, long solicitante) throws Exception {
+    private void verifyResponsavel(long responsavel, long solicitante) throws ExceptionTratement {
         if (responsavel == solicitante) {
             throw new ExceptionTratement("O responsável não pode ser o mesmo que solicitou");
         }
     }
 
-    private void verifyDatas(String dataDeInicio, String dataDeTermino) throws Exception {
+    private void verifyDatas(String dataDeInicio, String dataDeTermino) throws ExceptionTratement {
         String[] data_inicio = sliceDate(dataDeInicio);
         String[] data_termino = sliceDate(dataDeTermino);
 
@@ -219,7 +243,7 @@ public class ProjetosUtils {
         }
     }
 
-    private int verifyDespesas(List<DespesaInputDTO> despesasInputDTOS) throws Exception {
+    private int verifyDespesas(List<DespesaInputDTO> despesasInputDTOS) throws ExceptionTratement {
         int somaDespesas = 0;
         String[] despesas = new String[despesasInputDTOS.size()];
 
@@ -241,7 +265,9 @@ public class ProjetosUtils {
         return somaDespesas;
     }
 
-    private int verifyCcPagantes(List<SecaoPaganteInputDTO> secaoPaganteInputDTOS) throws Exception {
+    private int verifyCcPagantes(
+            List<SecaoPaganteInputDTO> secaoPaganteInputDTOS
+    ) throws ExceptionTratement {
         int somaCcPagantes = 0;
 
         long[] ccPagantes = new long[secaoPaganteInputDTOS.size()];
@@ -264,7 +290,7 @@ public class ProjetosUtils {
         return somaCcPagantes;
     }
 
-    private void verifyValores(int somaDespesas, int somaCcPagantes) throws Exception {
+    private void verifyValores(int somaDespesas, int somaCcPagantes) throws ExceptionTratement {
         if (somaCcPagantes < somaDespesas) {
             throw new ExceptionTratement("Verba dos ccPagantes menor do que a necessária");
         }

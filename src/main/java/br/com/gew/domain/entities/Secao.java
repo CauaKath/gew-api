@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -19,6 +20,7 @@ public class Secao {
     @JoinColumn(name = "responsavel_id")
     private Funcionario responsavel;
 
+    @Size(max = 255)
     private String nome;
 
 }

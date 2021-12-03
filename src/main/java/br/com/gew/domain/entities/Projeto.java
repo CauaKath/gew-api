@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -30,8 +31,13 @@ public class Projeto {
     private long id;
 
     private long numeroDoProjeto;
+
+    @Size(max = 200)
     private String titulo;
+
     private String descricao;
+
+    @Size(max = 80)
     private String ata;
 
     @ManyToOne
@@ -42,14 +48,20 @@ public class Projeto {
     @JoinColumn(name = "responsavel_id")
     private Funcionario responsavel;
 
+    @Size(max = 15)
     private String data_de_inicio;
+
+    @Size(max = 15)
     private String data_de_termino;
+
+    @Size(max = 15)
     private String data_de_aprovacao;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private StatusProjeto statusProjeto;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Size(max = 255)
     private String secao;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

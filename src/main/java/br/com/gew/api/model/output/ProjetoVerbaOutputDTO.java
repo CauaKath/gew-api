@@ -13,6 +13,6 @@ public class ProjetoVerbaOutputDTO {
 
     private double verbaAtrasados;
 
-    private double verbaNaoIniciados;
+    private double verbaTotal;
 
 }

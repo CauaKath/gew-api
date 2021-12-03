@@ -7,6 +7,8 @@ import br.com.gew.api.model.output.ProjetoConcluidosPorDiaOutputDTO;
 import br.com.gew.api.model.output.ProjetoDataOutputDTO;
 import br.com.gew.api.model.output.ProjetoOutputDTO;
 import br.com.gew.domain.entities.Projeto;
+import br.com.gew.domain.exception.EntityNotFoundException;
+import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.services.ProjetosService;
 import br.com.gew.domain.utils.DespesasUtils;
 import br.com.gew.domain.utils.ProjetoContagemUtils;
@@ -59,12 +61,12 @@ public class ProjetoController {
     }
 
     @GetMapping("/count")
-    public ResponseEntity<ContagemOutputDTO> contarPorStatus() throws Exception {
+    public ResponseEntity<ContagemOutputDTO> contarPorStatus() throws ExceptionTratement {
         return ResponseEntity.ok(projetoContagemUtils.contar());
     }
 
     @GetMapping("/count/last-seven")
-    public ResponseEntity<List<ProjetoConcluidosPorDiaOutputDTO>> contarUltimosDias() throws Exception {
+    public ResponseEntity<List<ProjetoConcluidosPorDiaOutputDTO>> contarUltimosDias() throws ExceptionTratement {
         return ResponseEntity.ok(projetoContagemUtils.concluidosUltimosDias());
     }
 
@@ -72,7 +74,7 @@ public class ProjetoController {
     public ResponseEntity<ProjetoOutputDTO> buscar(
             @PathVariable long numeroDoProjeto
     ) throws Exception {
-        return ResponseEntity.ok(projetosUtils.buscar(numeroDoProjeto));
+        return projetosUtils.buscar(numeroDoProjeto);
     }
 
     @PutMapping("/{numeroDoProjeto}")
@@ -99,6 +101,9 @@ public class ProjetoController {
     public ResponseEntity<ProjetoOutputDTO> remover(
             @PathVariable long numeroDoProjeto
     ) throws Exception {
+        if (projetosService.buscarPorNumeroProjeto(numeroDoProjeto).isEmpty()) {
+            throw new EntityNotFoundException("Projeto não encontrado");
+        }
 
         despesasUtils.remover(numeroDoProjeto);
 

@@ -21,7 +21,7 @@ public class FuncionariosUtils {
 
     public boolean verifyExceptionCadastro(
             FuncionarioInputDTO funcionarioInputDTO
-    ) throws Exception {
+    ) throws ExceptionTratement {
         verifyFuncionarioInfo(funcionarioInputDTO.getFuncionario());
 
         verifyCargo(funcionarioInputDTO.getCargo());
@@ -33,7 +33,11 @@ public class FuncionariosUtils {
 
     public boolean verifyExceptionEdicao(
             FuncionarioInputDTO funcionarioInputDTO, long numeroCracha
-    ) throws Exception {
+    ) throws ExceptionTratement {
+        if (funcionariosService.buscar(numeroCracha).isEmpty()) {
+            throw new ExceptionTratement("Funcionário não encontrado");
+        }
+
         verifyFuncionarioInfoEdit(funcionarioInputDTO.getFuncionario(), numeroCracha);
 
         verifyCargo(funcionarioInputDTO.getCargo());
@@ -43,9 +47,9 @@ public class FuncionariosUtils {
         return false;
     }
 
-    private void verifyFuncionarioInfo(
+    public void verifyFuncionarioInfo(
             FuncionarioDataInputDTO funcionarioDataInputDTO
-    ) throws Exception {
+    ) throws ExceptionTratement {
         if (funcionariosService.buscar(
                 funcionarioDataInputDTO.getNumero_cracha()
         ).isPresent()) {
@@ -71,10 +75,10 @@ public class FuncionariosUtils {
         }
     }
 
-    private void verifyFuncionarioInfoEdit(
+    public void verifyFuncionarioInfoEdit(
             FuncionarioDataInputDTO funcionarioDataInputDTO,
             long numeroCracha
-    ) throws Exception {
+    ) throws ExceptionTratement {
         if (funcionarioDataInputDTO.getNumero_cracha() !=
                 funcionariosService.buscar(numeroCracha).get().getNumero_cracha()
         ) {
@@ -120,7 +124,7 @@ public class FuncionariosUtils {
         }
     }
 
-    private void verifyCargo(String cargo) {
+    private void verifyCargo(String cargo) throws ExceptionTratement {
         if (cargo.equalsIgnoreCase("CONSULTOR")) {
             throw new ExceptionTratement("Use a rota de cadastro de consultor para isso");
         }
@@ -132,7 +136,7 @@ public class FuncionariosUtils {
         }
     }
 
-    private void verifySecao(String secao) {
+    private void verifySecao(String secao) throws ExceptionTratement {
         if (secoesService.buscarPorNome(
                 secao
         ) == null) {
@@ -140,8 +144,8 @@ public class FuncionariosUtils {
         }
     }
 
-    public ResponseEntity<FuncionarioOutputDTO> remover(long numeroCracha) throws Exception {
-        if (!funcionariosService.buscar(numeroCracha).isPresent()) {
+    public ResponseEntity<FuncionarioOutputDTO> remover(long numeroCracha) throws ExceptionTratement {
+        if (funcionariosService.buscar(numeroCracha) == null) {
             return ResponseEntity.notFound().build();
         }
 

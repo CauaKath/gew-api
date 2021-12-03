@@ -13,16 +13,20 @@ public class CargosService {
 
     private CargosRepository cargosRepository;
 
-    public Cargo buscar(long id) {
-        return cargosRepository
-                .findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Cargo não encontrado"));
+    public Cargo buscar(long id) throws EntityNotFoundException {
+        try {
+            return cargosRepository.findById(id).get();
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
     }
 
-    public Cargo buscarPorNome(String nome) {
-        return cargosRepository
-                .findByNome(nome)
-                .orElseThrow(() -> new EntityNotFoundException("Cargo com esse nome não encontrado"));
+    public Cargo buscarPorNome(String nome) throws EntityNotFoundException {
+        try {
+            return cargosRepository.findByNome(nome).get();
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
     }
 
 }

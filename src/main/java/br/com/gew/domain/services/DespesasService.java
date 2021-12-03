@@ -16,7 +16,7 @@ public class DespesasService {
     private DespesasRepository despesasRepository;
 
     @Transactional
-    public Despesa cadastrar(Despesa despesa) throws Exception {
+    public Despesa cadastrar(Despesa despesa) throws ExceptionTratement {
         try {
             return despesasRepository.save(despesa);
         } catch (Exception ex) {
@@ -24,7 +24,7 @@ public class DespesasService {
         }
     }
 
-    public List<Despesa> listarPorProjeto(long projetoId) throws Exception {
+    public List<Despesa> listarPorProjeto(long projetoId) throws ExceptionTratement {
         try {
             return despesasRepository.findAllByProjetoId(projetoId);
         } catch (Exception ex) {
@@ -33,7 +33,7 @@ public class DespesasService {
     }
 
     @Transactional
-    public Despesa editar(Despesa despesa, long despesa_id) throws Exception {
+    public Despesa editar(Despesa despesa, long despesa_id) throws ExceptionTratement {
         try {
             despesa.setId(despesa_id);
 
@@ -43,7 +43,7 @@ public class DespesasService {
         }
     }
 
-    public void remover(long despesa_id) throws Exception {
+    public void remover(long despesa_id) throws ExceptionTratement {
         try {
             despesasRepository.deleteById(despesa_id);
         } catch (Exception ex) {

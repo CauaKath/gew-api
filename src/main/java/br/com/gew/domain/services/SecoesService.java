@@ -2,6 +2,7 @@ package br.com.gew.domain.services;
 
 import br.com.gew.domain.entities.Secao;
 import br.com.gew.domain.exception.EntityNotFoundException;
+import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.repositories.SecoesRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,21 +15,30 @@ public class SecoesService {
 
     private FuncionariosSecoesService funcionariosSecoesService;
 
-    public Secao buscar(long id) {
-        return secoesRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Seção não encontrada"));
+    public Secao buscar(long id) throws ExceptionTratement {
+        try {
+            return secoesRepository.findById(id).get();
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
     }
 
-    public Secao buscarPorFuncionario(long funcionarioCracha) {
-        return secoesRepository.findById(
-                funcionariosSecoesService.buscarPorFuncionario(funcionarioCracha).getSecao_id()
-        ).orElseThrow(() -> new EntityNotFoundException("Seção não encontrada para este funcionário"));
+    public Secao buscarPorFuncionario(long funcionarioCracha) throws ExceptionTratement {
+        try {
+            return secoesRepository.findById(
+                    funcionariosSecoesService.buscarPorFuncionario(funcionarioCracha).getSecao_id()
+            ).get();
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
     }
 
-    public Secao buscarPorNome(String nome) {
-        return secoesRepository
-                .findByNome(nome)
-                .orElseThrow(() -> new EntityNotFoundException("Seção com esse nome não encontrada"));
+    public Secao buscarPorNome(String nome) throws ExceptionTratement {
+        try {
+            return secoesRepository.findByNome(nome).get();
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
     }
 
 }

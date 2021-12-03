@@ -4,6 +4,7 @@ import br.com.gew.api.assembler.SecaoPaganteAssembler;
 import br.com.gew.api.model.input.SecaoPaganteInputDTO;
 import br.com.gew.api.model.output.SecaoPaganteOutputDTO;
 import br.com.gew.domain.entities.SecaoPagante;
+import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.services.ProjetosService;
 import br.com.gew.domain.services.SecoesPagantesService;
 import br.com.gew.domain.services.SecoesService;
@@ -26,13 +27,13 @@ public class SecoesPagantesUtils {
             List<SecaoPaganteInputDTO> secaoPaganteInputDTOS,
             long numeroDoProjeto,
             double total
-    ) throws Exception {
+    ) throws ExceptionTratement {
         for (SecaoPaganteInputDTO secaoPaganteInputDTO : secaoPaganteInputDTOS) {
             SecaoPagante secaoPagante = secaoPaganteAssembler.toEntity(secaoPaganteInputDTO);
 
             secaoPagante.setSecao(secoesService.buscar(secaoPaganteInputDTO.getSecao_id()));
             secaoPagante.setPercentual(calcularPercentual(secaoPagante.getValor(), total));
-            secaoPagante.setProjeto(projetosService.buscar(numeroDoProjeto));
+            secaoPagante.setProjeto(projetosService.buscarPorNumeroProjeto(numeroDoProjeto).get());
 
             secoesPagantesService.cadastrar(secaoPagante);
         }
@@ -42,7 +43,7 @@ public class SecoesPagantesUtils {
         return Math.floor((valor / total) * 100);
     }
 
-    public List<SecaoPaganteOutputDTO> listar(long projetoId) throws Exception {
+    public List<SecaoPaganteOutputDTO> listar(long projetoId) throws ExceptionTratement {
         return secaoPaganteAssembler.toCollectionModel(
                 secoesPagantesService.listarPorProjeto(projetoId)
         );
@@ -52,14 +53,14 @@ public class SecoesPagantesUtils {
             List<SecaoPaganteInputDTO> secaoPaganteInputDTOS,
             long numeroDoProjeto,
             double total
-    ) throws Exception {
+    ) throws ExceptionTratement {
         List<SecaoPagante> secaoPagantes = secaoPaganteAssembler.toCollectionEntity(secaoPaganteInputDTOS);
         List<SecaoPagante> secaoPagantesDB = secoesPagantesService.listarPorProjeto(
-                projetosService.buscar(numeroDoProjeto).getId()
+                projetosService.buscarPorNumeroProjeto(numeroDoProjeto).get().getId()
         );
 
         for (int i = 0; i < secaoPagantesDB.size(); i ++) {
-            secaoPagantes.get(i).setProjeto(projetosService.buscar(numeroDoProjeto));
+            secaoPagantes.get(i).setProjeto(projetosService.buscarPorNumeroProjeto(numeroDoProjeto).get());
             secaoPagantes.get(i).setPercentual(calcularPercentual(secaoPagantes.get(i).getValor(), total));
             secaoPagantes.get(i).setSecao(
                     secoesService.buscar(secaoPaganteInputDTOS.get(i).getSecao_id())
@@ -70,7 +71,7 @@ public class SecoesPagantesUtils {
 
         if (secaoPagantes.size() > secaoPagantesDB.size()) {
             for (int i = secaoPagantesDB.size(); i < secaoPagantes.size(); i ++) {
-                secaoPagantes.get(i).setProjeto(projetosService.buscar(numeroDoProjeto));
+                secaoPagantes.get(i).setProjeto(projetosService.buscarPorNumeroProjeto(numeroDoProjeto).get());
                 secaoPagantes.get(i).setPercentual(
                         calcularPercentual(secaoPagantes.get(i).getValor(), total)
                 );
@@ -83,9 +84,9 @@ public class SecoesPagantesUtils {
         }
     }
 
-    public void remover(long numeroDoProjeto) throws Exception {
+    public void remover(long numeroDoProjeto) throws ExceptionTratement {
         List<SecaoPagante> secaoPagantesDB = secoesPagantesService.listarPorProjeto(
-                projetosService.buscar(numeroDoProjeto).getId()
+                projetosService.buscarPorNumeroProjeto(numeroDoProjeto).get().getId()
         );
 
         for (SecaoPagante secaoPagante : secaoPagantesDB) {

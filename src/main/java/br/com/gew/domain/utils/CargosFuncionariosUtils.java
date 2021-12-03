@@ -14,7 +14,7 @@ public class CargosFuncionariosUtils {
     private CargosFuncionariosService cargosFuncionariosService;
     private CargosService cargosService;
 
-    public void cadastrar(String cargoNome, long funcionarioCracha) throws Exception {
+    public void cadastrar(String cargoNome, long funcionarioCracha) throws ExceptionTratement {
         CargoFuncionario cargoFuncionario = new CargoFuncionario();
 
         cargoFuncionario.setCargo_id(
@@ -24,7 +24,7 @@ public class CargosFuncionariosUtils {
         cargosFuncionariosService.cadastrar(cargoFuncionario);
     }
 
-    public void editar(String cargoNome, long funcionarioCracha) throws Exception {
+    public void editar(String cargoNome, long funcionarioCracha) throws ExceptionTratement {
         CargoFuncionario cargoFuncionario = new CargoFuncionario();
 
         cargoFuncionario.setCargo_id(
@@ -34,12 +34,12 @@ public class CargosFuncionariosUtils {
         cargosFuncionariosService.editar(cargoFuncionario);
     }
 
-    public void remover(long funcionarioCracha) throws Exception {
-        if (cargosFuncionariosService.buscarPorFuncionario(funcionarioCracha).isEmpty()) {
+    public void remover(long funcionarioCracha) throws ExceptionTratement {
+        if (cargosFuncionariosService.buscarPorFuncionario(funcionarioCracha) == null) {
             throw new ExceptionTratement("Funcionário não possui cargo");
         }
 
-        long id = cargosFuncionariosService.buscarPorFuncionario(funcionarioCracha).get().getId();
+        long id = cargosFuncionariosService.buscarPorFuncionario(funcionarioCracha).getId();
 
         cargosFuncionariosService.remover(id);
     }

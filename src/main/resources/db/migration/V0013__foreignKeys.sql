@@ -21,3 +21,15 @@ FOREIGN KEY (funcionario_cracha) REFERENCES funcionarios(numero_cracha);
 
 ALTER TABLE cargos_funcionarios ADD CONSTRAINT fk_cargo_id
 FOREIGN KEY (cargo_id) REFERENCES cargos(id);
+
+ALTER TABLE consultores_skills ADD CONSTRAINT fk_consultor_cracha
+FOREIGN KEY (funcionario_cracha) REFERENCES funcionarios(numero_cracha);
+
+ALTER TABLE consultores_skills ADD CONSTRAINT fk_skill_id
+FOREIGN KEY (skill_id) REFERENCES skills(id);
+
+ALTER TABLE consultores_fornecedores ADD CONSTRAINT fk_consultor_fornecedor
+FOREIGN KEY (funcionario_cracha) REFERENCES funcionarios(numero_cracha);
+
+ALTER TABLE consultores_fornecedores ADD CONSTRAINT fk_fornecedor_id
+FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id);

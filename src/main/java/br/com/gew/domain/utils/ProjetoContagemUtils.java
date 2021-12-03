@@ -7,6 +7,7 @@ import br.com.gew.api.model.output.ProjetoVerbaOutputDTO;
 import br.com.gew.domain.entities.Projeto;
 import br.com.gew.domain.entities.SecaoPagante;
 import br.com.gew.domain.entities.StatusProjeto;
+import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.services.ProjetosService;
 import br.com.gew.domain.services.SecoesPagantesService;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ public class ProjetoContagemUtils {
     private ProjetosService projetosService;
     private SecoesPagantesService secoesPagantesService;
 
-    public ContagemOutputDTO contar() throws Exception {
+    public ContagemOutputDTO contar() throws ExceptionTratement {
         ContagemOutputDTO contagem = new ContagemOutputDTO();
 
         contagem.setContagem(contarPorStatus());
@@ -32,7 +33,7 @@ public class ProjetoContagemUtils {
         return contagem;
     }
 
-    private ProjetoContagemOutputDTO contarPorStatus() throws Exception {
+    private ProjetoContagemOutputDTO contarPorStatus() throws ExceptionTratement {
         ProjetoContagemOutputDTO projetoContagem = new ProjetoContagemOutputDTO();
 
         projetoContagem.setConcluidos(projetosService.listarPorStatus(StatusProjeto.CONCLUIDO).size());
@@ -43,18 +44,33 @@ public class ProjetoContagemUtils {
         return projetoContagem;
     }
 
-    private ProjetoVerbaOutputDTO contarVerba() throws Exception {
+    private ProjetoVerbaOutputDTO contarVerba() throws ExceptionTratement {
         ProjetoVerbaOutputDTO projetoVerba = new ProjetoVerbaOutputDTO();
 
         projetoVerba.setVerbaAtrasados(contarVerbaPorStatus(StatusProjeto.ATRASADO));
         projetoVerba.setVerbaConcluidos(contarVerbaPorStatus(StatusProjeto.CONCLUIDO));
         projetoVerba.setVerbaEmAndamento(contarVerbaPorStatus(StatusProjeto.EM_ANDAMENTO));
-        projetoVerba.setVerbaNaoIniciados(contarVerbaPorStatus(StatusProjeto.NAO_INICIADO));
+        projetoVerba.setVerbaTotal(contarVerbaTotal());
 
         return projetoVerba;
     }
 
-    private double contarVerbaPorStatus(StatusProjeto statusProjeto) throws Exception {
+    private double contarVerbaTotal() {
+        double total = 0;
+        List<Projeto> projetos = projetosService.listar();
+
+        for (Projeto projeto : projetos) {
+            List<SecaoPagante> secaoPagantes = secoesPagantesService.listarPorProjeto(projeto.getId());
+
+            for (SecaoPagante secaoPagante : secaoPagantes) {
+                total += secaoPagante.getValor();
+            }
+        }
+
+        return total;
+    }
+
+    private double contarVerbaPorStatus(StatusProjeto statusProjeto) throws ExceptionTratement {
         double total = 0;
         List<Projeto> projetos = projetosService.listarPorStatus(statusProjeto);
 
@@ -90,7 +106,7 @@ public class ProjetoContagemUtils {
         return projetos;
     }
 
-    private List<Projeto> buscarProjetos(LocalDate data) {
+    private List<Projeto> buscarProjetos(LocalDate data) throws ExceptionTratement {
         return projetosService.listarPorDataConclusao(data);
     }
 

@@ -15,7 +15,7 @@ public class FuncionariosSecoesService {
     private FuncionariosSecoesRepository funcionariosSecoesRepository;
 
     @Transactional
-    public FuncionarioSecao cadastrar(FuncionarioSecao funcionarioSecao) throws Exception {
+    public FuncionarioSecao cadastrar(FuncionarioSecao funcionarioSecao) throws ExceptionTratement {
         try {
             return funcionariosSecoesRepository.save(funcionarioSecao);
         } catch (Exception ex) {
@@ -23,7 +23,7 @@ public class FuncionariosSecoesService {
         }
     }
 
-    public FuncionarioSecao buscarPorFuncionario(long funcionarioCracha) {
+    public FuncionarioSecao buscarPorFuncionario(long funcionarioCracha) throws EntityNotFoundException {
         try {
             return funcionariosSecoesRepository.findByFuncionarioCracha(funcionarioCracha).get();
         } catch (Exception ex) {
@@ -34,7 +34,7 @@ public class FuncionariosSecoesService {
     @Transactional
     public FuncionarioSecao editar(
             FuncionarioSecao funcionarioSecao
-    ) throws Exception {
+    ) throws ExceptionTratement {
         try {
             return funcionariosSecoesRepository.save(funcionarioSecao);
         } catch (Exception ex) {
@@ -42,7 +42,7 @@ public class FuncionariosSecoesService {
         }
     }
 
-    public void remover(long id) {
+    public void remover(long id) throws ExceptionTratement {
         try {
             funcionariosSecoesRepository.deleteById(id);
         } catch (Exception ex) {

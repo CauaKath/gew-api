@@ -61,6 +61,10 @@ public class FuncionarioController {
     public ResponseEntity<FuncionarioOutputDTO> buscar(
         @PathVariable long numeroCracha
     ) throws Exception {
+        if (funcionariosService.buscar(numeroCracha).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
         return ResponseEntity.ok(
                 funcionarioAssembler.toModel(funcionariosService.buscar(numeroCracha).get()));
     }
@@ -94,6 +98,10 @@ public class FuncionarioController {
     public ResponseEntity<FuncionarioOutputDTO> remover(
             @PathVariable long numeroCracha
     ) throws Exception {
+        if (funcionariosService.buscar(numeroCracha).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
         cargosFuncionariosUtils.remover(numeroCracha);
 
         funcionariosSecoesUtils.remover(numeroCracha);

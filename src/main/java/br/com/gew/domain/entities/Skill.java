@@ -9,21 +9,14 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @Entity
-@Table(name = "despesas")
-public class Despesa {
+@Table(name = "skills")
+public class Skill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Size(max = 255)
+    @Size(max = 100)
     private String nome;
-
-    private int esforco;
-    private double valor;
-
-    @ManyToOne
-    @JoinColumn(name = "projeto_id")
-    private Projeto projeto;
 
 }

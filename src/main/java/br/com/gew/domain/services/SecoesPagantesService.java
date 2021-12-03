@@ -16,7 +16,7 @@ public class SecoesPagantesService {
     private SecoesPagantesRepository secoesPagantesRepository;
 
     @Transactional
-    public SecaoPagante cadastrar(SecaoPagante secaoPagante) throws Exception {
+    public SecaoPagante cadastrar(SecaoPagante secaoPagante) throws ExceptionTratement {
         try {
             return secoesPagantesRepository.save(secaoPagante);
         } catch (Exception ex) {
@@ -24,7 +24,7 @@ public class SecoesPagantesService {
         }
     }
 
-    public List<SecaoPagante> listarPorProjeto(long projetoId) throws Exception {
+    public List<SecaoPagante> listarPorProjeto(long projetoId) throws ExceptionTratement {
         try {
             return secoesPagantesRepository.findAllByProjetoId(projetoId);
         } catch (Exception ex) {
@@ -36,7 +36,7 @@ public class SecoesPagantesService {
     public SecaoPagante editar(
             SecaoPagante secaoPagante,
             long secao_pagante_id
-    ) throws Exception {
+    ) throws ExceptionTratement {
         try {
             secaoPagante.setId(secao_pagante_id);
 
@@ -46,7 +46,7 @@ public class SecoesPagantesService {
         }
     }
 
-    public void remover(long secao_pagante_id) throws Exception {
+    public void remover(long secao_pagante_id) throws ExceptionTratement {
         try {
             secoesPagantesRepository.deleteById(secao_pagante_id);
         } catch (Exception ex) {

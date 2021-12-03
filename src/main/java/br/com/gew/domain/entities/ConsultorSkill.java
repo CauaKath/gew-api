@@ -4,19 +4,19 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "cargos")
-public class Cargo {
+@Table(name = "consultores_skills")
+public class ConsultorSkill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Size(max = 100)
-    private String nome;
+    private long funcionario_cracha;
+
+    private long skill_id;
 
 }
