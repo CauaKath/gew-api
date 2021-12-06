@@ -2,7 +2,10 @@ package br.com.gew.domain.utils;
 
 import br.com.gew.api.assembler.ProjetoAssembler;
 import br.com.gew.api.model.input.*;
+import br.com.gew.api.model.output.DespesaOutputDTO;
 import br.com.gew.api.model.output.ProjetoOutputDTO;
+import br.com.gew.api.model.output.SecaoPaganteOutputDTO;
+import br.com.gew.api.model.output.ValoresTotaisOutputDTO;
 import br.com.gew.domain.entities.Despesa;
 import br.com.gew.domain.entities.Projeto;
 import br.com.gew.domain.entities.StatusProjeto;
@@ -115,6 +118,9 @@ public class ProjetosUtils {
 
     private ProjetoOutputDTO montarProjeto(Projeto projeto) throws ExceptionTratement {
         ProjetoOutputDTO projetoOutputDTO = new ProjetoOutputDTO();
+        double valorTotalDespesas = 0;
+        double valorTotalEsforcos = 0;
+        double valorTotalCC = 0;
 
         projetoOutputDTO.setProjetoData(
                 projetoAssembler.toModel(projeto)
@@ -127,6 +133,23 @@ public class ProjetosUtils {
         projetoOutputDTO.setSecoesPagantes(
                 secoesPagantesUtils.listar(projeto.getId())
         );
+
+        ValoresTotaisOutputDTO valoresTotaisDTO = new ValoresTotaisOutputDTO();
+
+        for (DespesaOutputDTO despesa : projetoOutputDTO.getDespesas()) {
+            valorTotalDespesas += despesa.getValor();
+            valorTotalEsforcos += despesa.getEsforco();
+        }
+
+        for (SecaoPaganteOutputDTO secaoPagante : projetoOutputDTO.getSecoesPagantes()) {
+            valorTotalCC += secaoPagante.getValor();
+        }
+
+        valoresTotaisDTO.setValorTotalDespesas(valorTotalDespesas);
+        valoresTotaisDTO.setValorTotalEsforco(valorTotalEsforcos);
+        valoresTotaisDTO.setValorTotalCcPagantes(valorTotalCC);
+
+        projetoOutputDTO.setValoresTotais(valoresTotaisDTO);
 
         return projetoOutputDTO;
     }

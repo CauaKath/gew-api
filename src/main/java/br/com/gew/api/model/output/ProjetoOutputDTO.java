@@ -15,4 +15,6 @@ public class ProjetoOutputDTO {
 
     private List<SecaoPaganteOutputDTO> secoesPagantes;
 
+    private ValoresTotaisOutputDTO valoresTotais;
+
 }
