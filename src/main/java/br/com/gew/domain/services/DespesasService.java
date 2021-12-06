@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -19,6 +20,14 @@ public class DespesasService {
     public Despesa cadastrar(Despesa despesa) throws ExceptionTratement {
         try {
             return despesasRepository.save(despesa);
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
+    }
+
+    public Optional<Despesa> buscar(long id) throws ExceptionTratement {
+        try {
+            return despesasRepository.findById(id);
         } catch (Exception ex) {
             throw new ExceptionTratement("Error: " + ex);
         }

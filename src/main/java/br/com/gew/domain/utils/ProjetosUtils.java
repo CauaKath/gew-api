@@ -1,15 +1,14 @@
 package br.com.gew.domain.utils;
 
 import br.com.gew.api.assembler.ProjetoAssembler;
-import br.com.gew.api.model.input.DespesaInputDTO;
-import br.com.gew.api.model.input.ProjetoDataInputDTO;
-import br.com.gew.api.model.input.ProjetoInputDTO;
-import br.com.gew.api.model.input.SecaoPaganteInputDTO;
+import br.com.gew.api.model.input.*;
 import br.com.gew.api.model.output.ProjetoOutputDTO;
+import br.com.gew.domain.entities.Despesa;
 import br.com.gew.domain.entities.Projeto;
 import br.com.gew.domain.entities.StatusProjeto;
 import br.com.gew.domain.exception.EntityNotFoundException;
 import br.com.gew.domain.exception.ExceptionTratement;
+import br.com.gew.domain.services.DespesasService;
 import br.com.gew.domain.services.FuncionariosService;
 import br.com.gew.domain.services.ProjetosService;
 import br.com.gew.domain.services.SecoesService;
@@ -31,9 +30,11 @@ public class ProjetosUtils {
     private SecoesService secoesService;
     private ProjetosService projetosService;
     private FuncionariosService funcionariosService;
+    private DespesasService despesasService;
 
     private DespesasUtils despesasUtils;
     private SecoesPagantesUtils secoesPagantesUtils;
+    private LogHorasUtils logHorasUtils;
 
     public Projeto setDadosPadrao(ProjetoDataInputDTO projetoDataInputDTO) throws ExceptionTratement {
         Projeto projeto = projetoAssembler.toEntity(projetoDataInputDTO);
@@ -302,6 +303,49 @@ public class ProjetosUtils {
 
     private String[] sliceDate(String date) {
         return date.split("/");
+    }
+
+    public void apontar(HorasInputDTO horas, long numeroDoProjeto, long numero_cracha) {
+        if (projetosService.buscarPorNumeroProjeto(numeroDoProjeto).isEmpty()) {
+            throw new EntityNotFoundException("Projeto não existe");
+        }
+
+        long projetoId = projetosService.buscarPorNumeroProjeto(numeroDoProjeto).get().getId();
+        int horas_totais = horas.getHoras() + projetosService.buscar(projetoId).get().getHoras_apontadas();
+        int horas_aprovadas = 0;
+
+        List<Despesa> despesasDoProjeto = despesasService.listarPorProjeto(projetoId);
+
+        for (Despesa despesas : despesasDoProjeto) {
+            horas_aprovadas += despesas.getEsforco();
+        }
+
+        if (horas.getHoras() + projetosService.buscar(projetoId).get().getHoras_apontadas() > horas_aprovadas) {
+            throw new ExceptionTratement("Horas apontadas excedem as horas totais aprovadas");
+        }
+
+        if (horas_totais == horas_aprovadas) {
+            Projeto projeto = projetosService.buscar(projetoId).get();
+
+            projeto.setDataDaConclusao(LocalDate.now());
+            projeto.setHoras_apontadas(
+                    projetosService.buscar(projetoId).get().getHoras_apontadas() + horas.getHoras()
+            );
+            projeto.setStatusProjeto(StatusProjeto.CONCLUIDO);
+
+            projetosService.editar(projeto, numeroDoProjeto);
+
+            logHorasUtils.apontar(horas, projetoId, numero_cracha);
+            return;
+        }
+
+        Projeto projeto = projetosService.buscar(projetoId).get();
+
+        projeto.setHoras_apontadas(projetosService.buscar(projetoId).get().getHoras_apontadas() + horas.getHoras());
+        projeto.setStatusProjeto(StatusProjeto.EM_ANDAMENTO);
+
+        logHorasUtils.apontar(horas, projetoId, numero_cracha);
+        projetosService.editar(projeto, numeroDoProjeto);
     }
 
 }

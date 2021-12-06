@@ -33,3 +33,15 @@ FOREIGN KEY (funcionario_cracha) REFERENCES funcionarios(numero_cracha);
 
 ALTER TABLE consultores_fornecedores ADD CONSTRAINT fk_fornecedor_id
 FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id);
+
+ALTER TABLE alocados ADD CONSTRAINT fk_alocado_funcionario
+FOREIGN KEY (funcionario_cracha) REFERENCES funcionarios(numero_cracha);
+
+ALTER TABLE alocados ADD CONSTRAINT fk_alocado_projeto
+FOREIGN KEY (projeto_id) REFERENCES projetos(id);
+
+ALTER TABLE alocados_logs ADD CONSTRAINT fk_alocado_id
+FOREIGN KEY (alocado_id) REFERENCES alocados(id);
+
+ALTER TABLE alocados_logs ADD CONSTRAINT fk_log_id
+FOREIGN KEY (log_id) REFERENCES log_horas(id);
