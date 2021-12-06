@@ -9,6 +9,7 @@ import br.com.gew.domain.services.FuncionariosService;
 import br.com.gew.domain.utils.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +37,10 @@ public class ConsultorController {
         }
 
         Funcionario novoFuncionario = funcionarioAssembler.toEntity(consultorInputDTO.getFuncionarioData());
+
+        novoFuncionario.setSenha(
+                new BCryptPasswordEncoder().encode(novoFuncionario.getSenha())
+        );
 
         Funcionario funcionario = funcionariosService.cadastrar(novoFuncionario);
 
