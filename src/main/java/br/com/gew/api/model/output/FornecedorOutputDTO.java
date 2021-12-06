@@ -5,9 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SecaoOutputDTO {
+public class FornecedorOutputDTO {
 
     private String nome;
-    private FuncionarioDataOutputDTO responsavel;
+
+    private String cnpj;
+
+    private String email;
 
 }

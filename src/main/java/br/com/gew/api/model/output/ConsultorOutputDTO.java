@@ -9,12 +9,14 @@ import java.util.List;
 @Setter
 public class ConsultorOutputDTO {
 
-    private FuncionarioOutputDTO funcionarioData;
+    private FuncionarioDataOutputDTO funcionarioData;
 
     private List<Long> projetos;
 
     private List<String> skills;
 
     private String fornecedor;
+
+    private boolean status;
 
 }

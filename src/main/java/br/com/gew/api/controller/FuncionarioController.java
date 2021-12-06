@@ -2,6 +2,7 @@ package br.com.gew.api.controller;
 
 import br.com.gew.api.assembler.FuncionarioAssembler;
 import br.com.gew.api.model.input.FuncionarioInputDTO;
+import br.com.gew.api.model.output.FuncionarioDataOutputDTO;
 import br.com.gew.api.model.output.FuncionarioOutputDTO;
 import br.com.gew.domain.entities.Funcionario;
 import br.com.gew.domain.services.FuncionariosService;
@@ -29,7 +30,7 @@ public class FuncionarioController {
     private FuncionarioAssembler funcionarioAssembler;
 
     @PostMapping
-    public ResponseEntity<FuncionarioOutputDTO> cadastrar(
+    public ResponseEntity<FuncionarioDataOutputDTO> cadastrar(
             @RequestBody FuncionarioInputDTO funcionarioInputDTO
     ) throws Exception {
         if (funcionariosUtils.verifyExceptionCadastro(funcionarioInputDTO)) {
@@ -58,8 +59,7 @@ public class FuncionarioController {
 
     @GetMapping
     public ResponseEntity<List<FuncionarioOutputDTO>> listar() throws Exception {
-        return ResponseEntity.ok(
-                funcionarioAssembler.toCollectionModel(funcionariosService.listar()));
+        return ResponseEntity.ok(funcionariosUtils.listar());
     }
 
     @GetMapping("/{numeroCracha}")
@@ -70,12 +70,11 @@ public class FuncionarioController {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(
-                funcionarioAssembler.toModel(funcionariosService.buscar(numeroCracha).get()));
+        return ResponseEntity.ok(funcionariosUtils.buscar(numeroCracha));
     }
 
     @PutMapping("/{numeroCracha}")
-    public ResponseEntity<FuncionarioOutputDTO> editar(
+    public ResponseEntity<FuncionarioDataOutputDTO> editar(
             @RequestBody FuncionarioInputDTO funcionarioInputDTO,
             @PathVariable long numeroCracha
     ) throws Exception {
@@ -100,7 +99,7 @@ public class FuncionarioController {
     }
 
     @DeleteMapping("/{numeroCracha}")
-    public ResponseEntity<FuncionarioOutputDTO> remover(
+    public ResponseEntity<FuncionarioDataOutputDTO> remover(
             @PathVariable long numeroCracha
     ) throws Exception {
         if (funcionariosService.buscar(numeroCracha).isEmpty()) {

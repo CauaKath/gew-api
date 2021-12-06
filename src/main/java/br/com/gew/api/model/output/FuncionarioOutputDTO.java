@@ -7,12 +7,8 @@ import lombok.Setter;
 @Setter
 public class FuncionarioOutputDTO {
 
-    private long numero_cracha;
+    private FuncionarioDataOutputDTO funcionario;
 
-    private String nome;
-
-    private String email;
-
-    private double valor_hora;
+    private String secao;
 
 }

@@ -1,15 +1,22 @@
 package br.com.gew.domain.utils;
 
+import br.com.gew.api.assembler.FuncionarioAssembler;
 import br.com.gew.api.model.input.FuncionarioDataInputDTO;
 import br.com.gew.api.model.input.FuncionarioInputDTO;
+import br.com.gew.api.model.output.FuncionarioDataOutputDTO;
 import br.com.gew.api.model.output.FuncionarioOutputDTO;
+import br.com.gew.domain.entities.Funcionario;
 import br.com.gew.domain.exception.ExceptionTratement;
+import br.com.gew.domain.services.CargosFuncionariosService;
 import br.com.gew.domain.services.CargosService;
 import br.com.gew.domain.services.FuncionariosService;
 import br.com.gew.domain.services.SecoesService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -18,6 +25,43 @@ public class FuncionariosUtils {
     private FuncionariosService funcionariosService;
     private CargosService cargosService;
     private SecoesService secoesService;
+
+    private CargosFuncionariosService cargosFuncionariosService;
+
+    private FuncionarioAssembler funcionarioAssembler;
+
+    public FuncionarioOutputDTO buscar(long numeroCracha) {
+        Funcionario funcionario = funcionariosService.buscar(numeroCracha).get();
+
+        FuncionarioOutputDTO funcionarioOutputDTO = new FuncionarioOutputDTO();
+
+        funcionarioOutputDTO.setFuncionario(funcionarioAssembler.toModel(funcionario));
+        funcionarioOutputDTO.setSecao(secoesService.buscarPorFuncionario(numeroCracha).get().getNome());
+
+        return funcionarioOutputDTO;
+    }
+
+    public List<FuncionarioOutputDTO> listar() {
+        List<FuncionarioOutputDTO> funcionarioOutputs = new ArrayList<>();
+        List<Funcionario> funcionarios = funcionariosService.listar();
+
+        for (Funcionario funcionario : funcionarios) {
+            if (cargosFuncionariosService.buscarPorFuncionario(
+                    funcionario.getNumero_cracha()
+            ).getCargo_id() != 4) {
+                FuncionarioOutputDTO funcionarioOutputDTO = new FuncionarioOutputDTO();
+
+                funcionarioOutputDTO.setFuncionario(funcionarioAssembler.toModel(funcionario));
+                funcionarioOutputDTO.setSecao(
+                        secoesService.buscarPorFuncionario(funcionario.getNumero_cracha()).get().getNome()
+                );
+
+                funcionarioOutputs.add(funcionarioOutputDTO);
+            }
+        }
+
+        return funcionarioOutputs;
+    }
 
     public boolean verifyExceptionCadastro(
             FuncionarioInputDTO funcionarioInputDTO
@@ -144,8 +188,8 @@ public class FuncionariosUtils {
         }
     }
 
-    public ResponseEntity<FuncionarioOutputDTO> remover(long numeroCracha) throws ExceptionTratement {
-        if (funcionariosService.buscar(numeroCracha) == null) {
+    public ResponseEntity<FuncionarioDataOutputDTO> remover(long numeroCracha) throws ExceptionTratement {
+        if (funcionariosService.buscar(numeroCracha).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 

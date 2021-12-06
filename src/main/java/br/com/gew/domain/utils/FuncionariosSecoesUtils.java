@@ -18,7 +18,7 @@ public class FuncionariosSecoesUtils {
         FuncionarioSecao funcionarioSecao = new FuncionarioSecao();
 
         funcionarioSecao.setSecao_id(
-                secoesService.buscarPorNome(secaoNome).getId()
+                secoesService.buscarPorNome(secaoNome).get().getId()
         );
         funcionarioSecao.setFuncionario_cracha(funcionarioCracha);
 
@@ -29,7 +29,7 @@ public class FuncionariosSecoesUtils {
         FuncionarioSecao funcionarioSecao = new FuncionarioSecao();
 
         funcionarioSecao.setSecao_id(
-                secoesService.buscarPorNome(secaoNome).getId()
+                secoesService.buscarPorNome(secaoNome).get().getId()
         );
         funcionarioSecao.setFuncionario_cracha(funcionarioCracha);
 

@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -36,6 +36,14 @@ public class FornecedoresService {
     public Fornecedor buscarPorNome(String nome) throws EntityNotFoundException {
         try {
             return fornecedoresRepository.findByNome(nome).get();
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
+    }
+
+    public List<Fornecedor> listar() {
+        try {
+            return fornecedoresRepository.findAll();
         } catch (Exception ex) {
             throw new ExceptionTratement("Error: " + ex);
         }

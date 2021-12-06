@@ -3,6 +3,7 @@ package br.com.gew.api.controller;
 import br.com.gew.api.assembler.FuncionarioAssembler;
 import br.com.gew.api.model.input.ConsultorInputDTO;
 import br.com.gew.api.model.output.ConsultorOutputDTO;
+import br.com.gew.api.model.output.FuncionarioDataOutputDTO;
 import br.com.gew.api.model.output.FuncionarioOutputDTO;
 import br.com.gew.domain.entities.Funcionario;
 import br.com.gew.domain.services.FuncionariosService;
@@ -29,7 +30,7 @@ public class ConsultorController {
     private FuncionariosUtils funcionariosUtils;
 
     @PostMapping
-    public ResponseEntity<FuncionarioOutputDTO> cadastrar(
+    public ResponseEntity<FuncionarioDataOutputDTO> cadastrar(
             @RequestBody ConsultorInputDTO consultorInputDTO
     ) throws Exception {
         if (consultoresUtils.verifyExceptionCadastro(consultorInputDTO)) {
@@ -72,7 +73,7 @@ public class ConsultorController {
     }
 
     @PutMapping("/{funcionario_cracha}")
-    public ResponseEntity<FuncionarioOutputDTO> editar(
+    public ResponseEntity<FuncionarioDataOutputDTO> editar(
             @RequestBody ConsultorInputDTO consultorInputDTO,
             @PathVariable long funcionario_cracha
     ) throws Exception {
@@ -97,7 +98,7 @@ public class ConsultorController {
     }
 
     @DeleteMapping("/{funcionario_cracha}")
-    public ResponseEntity<FuncionarioOutputDTO> remover(
+    public ResponseEntity<FuncionarioDataOutputDTO> remover(
             @PathVariable long funcionario_cracha
     ) throws Exception {
         if (consultoresUtils.buscar(funcionario_cracha) == null) {

@@ -3,10 +3,7 @@ package br.com.gew.domain.utils;
 import br.com.gew.api.assembler.FuncionarioAssembler;
 import br.com.gew.api.model.input.ConsultorInputDTO;
 import br.com.gew.api.model.output.ConsultorOutputDTO;
-import br.com.gew.domain.entities.CargoFuncionario;
-import br.com.gew.domain.entities.ConsultorSkill;
-import br.com.gew.domain.entities.Fornecedor;
-import br.com.gew.domain.entities.Funcionario;
+import br.com.gew.domain.entities.*;
 import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.services.*;
 import lombok.AllArgsConstructor;
@@ -27,6 +24,8 @@ public class ConsultoresUtils {
     private ConsultoresSkillsService consultoresSkillsService;
     private FornecedoresService fornecedoresService;
     private SkillsService skillsService;
+    private AlocadosService alocadosService;
+    private ProjetosService projetosService;
 
     private FuncionariosUtils funcionariosUtils;
 
@@ -55,6 +54,8 @@ public class ConsultoresUtils {
 
         setFuncionarioData(consultorOutput, funcionario_cracha);
 
+        setProjetos(consultorOutput, funcionario_cracha);
+
         setFornecedor(consultorOutput, funcionario_cracha);
 
         setSkills(consultorOutput, funcionario_cracha);
@@ -69,6 +70,27 @@ public class ConsultoresUtils {
         Funcionario consultor = funcionariosService.buscar(funcionario_cracha).get();
 
         consultorOutputDTO.setFuncionarioData(funcionarioAssembler.toModel(consultor));
+    }
+
+    private void setProjetos(
+            ConsultorOutputDTO consultorOutputDTO,
+            long funcionario_cracha
+    ) {
+        consultorOutputDTO.setStatus(false);
+
+        if (!alocadosService.listarPorFuncionario(funcionario_cracha).isEmpty()) {
+            List<Alocado> alocados = alocadosService.listarPorFuncionario(funcionario_cracha);
+            List<Long> projetos = new ArrayList<>();
+
+            for (Alocado alocado : alocados) {
+                projetos.add(
+                        projetosService.buscar(alocado.getProjeto_id()).get().getNumeroDoProjeto()
+                );
+            }
+
+            consultorOutputDTO.setProjetos(projetos);
+            consultorOutputDTO.setStatus(true);
+        }
     }
 
     private void setFornecedor(

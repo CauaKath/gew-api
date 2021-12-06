@@ -14,8 +14,8 @@ public class ProjetoDataOutputDTO {
     private String descricao;
     private String ata;
 
-    private FuncionarioOutputDTO solicitante;
-    private FuncionarioOutputDTO responsavel;
+    private FuncionarioDataOutputDTO solicitante;
+    private FuncionarioDataOutputDTO responsavel;
 
     private String data_de_inicio;
     private String data_de_termino;

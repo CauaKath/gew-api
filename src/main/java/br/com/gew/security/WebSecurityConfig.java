@@ -38,6 +38,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
             "/projetos/*",
             "/projetos/*/*",
             "/projetos/*/*/*",
+            "/secoes/*/*",
+            "/secoes/*",
+            "/secoes",
+            "/fornecedores"
     };
 
 

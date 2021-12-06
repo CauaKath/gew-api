@@ -78,7 +78,7 @@ public class ProjetosUtils {
                 projetoDataInputDTO.getCracha_solicitante()
         ).get());
         projeto.setSecao(
-                secoesService.buscarPorFuncionario(projetoDataInputDTO.getCracha_solicitante()).getNome()
+                secoesService.buscarPorFuncionario(projetoDataInputDTO.getCracha_solicitante()).get().getNome()
         );
     }
 
