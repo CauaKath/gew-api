@@ -19,6 +19,8 @@ public class LogHoras {
 
     private int horas;
 
+    private String descricao;
+
     private LocalDate data;
 
     private LocalDateTime criado_em;

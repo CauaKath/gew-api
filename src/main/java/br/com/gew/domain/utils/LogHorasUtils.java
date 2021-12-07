@@ -64,6 +64,7 @@ public class LogHorasUtils {
             logHoras.setData(LocalDate.parse(dataFormat));
         }
 
+        logHoras.setDescricao(horas.getDescricao());
         logHoras.setHoras(horas.getHoras());
         logHoras.setCriado_em(LocalDateTime.now());
 

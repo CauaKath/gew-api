@@ -45,3 +45,6 @@ FOREIGN KEY (alocado_id) REFERENCES alocados(id);
 
 ALTER TABLE alocados_logs ADD CONSTRAINT fk_log_id
 FOREIGN KEY (log_id) REFERENCES log_horas(id);
+
+ALTER TABLE atas ADD CONSTRAINT fk_ata_projeto
+FOREIGN KEY (projeto_id) REFERENCES projetos (id);

@@ -41,7 +41,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
             "/secoes/*/*",
             "/secoes/*",
             "/secoes",
-            "/fornecedores"
+            "/fornecedores",
+            "/files/*/*"
     };
 
 

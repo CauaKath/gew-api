@@ -11,4 +11,6 @@ public class HorasInputDTO {
 
     private String data;
 
+    private String descricao;
+
 }

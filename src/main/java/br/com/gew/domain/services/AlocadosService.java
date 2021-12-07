@@ -35,11 +35,27 @@ public class AlocadosService {
         }
     }
 
+    public List<Alocado> listar() throws ExceptionTratement {
+        try {
+            return alocadosRepository.findAll();
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
+    }
+
     public List<Alocado> listarPorFuncionario(long funcionario_cracha) throws ExceptionTratement {
         try {
             return alocadosRepository.findAllByFuncionarioCracha(
                     funcionario_cracha
             );
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
+    }
+
+    public List<Alocado> listarPorProjeto(long projeto_id) throws ExceptionTratement {
+        try {
+            return alocadosRepository.findAllByProjetoId(projeto_id);
         } catch (Exception ex) {
             throw new ExceptionTratement("Error: " + ex);
         }

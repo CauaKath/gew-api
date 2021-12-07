@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -27,6 +29,14 @@ public class LogHorasService {
     public Optional<LogHoras> buscar(long id) throws ExceptionTratement {
         try {
             return logHorasRepository.findById(id);
+        } catch (Exception ex) {
+            throw new ExceptionTratement("Error: " + ex);
+        }
+    }
+
+    public List<LogHoras> listarPorData(LocalDate data) throws ExceptionTratement {
+        try {
+            return logHorasRepository.findAllByData(data);
         } catch (Exception ex) {
             throw new ExceptionTratement("Error: " + ex);
         }

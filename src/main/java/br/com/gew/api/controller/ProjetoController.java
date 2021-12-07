@@ -3,10 +3,7 @@ package br.com.gew.api.controller;
 import br.com.gew.api.assembler.ProjetoAssembler;
 import br.com.gew.api.model.input.HorasInputDTO;
 import br.com.gew.api.model.input.ProjetoInputDTO;
-import br.com.gew.api.model.output.ContagemOutputDTO;
-import br.com.gew.api.model.output.ProjetoConcluidosPorDiaOutputDTO;
-import br.com.gew.api.model.output.ProjetoDataOutputDTO;
-import br.com.gew.api.model.output.ProjetoOutputDTO;
+import br.com.gew.api.model.output.*;
 import br.com.gew.domain.entities.Projeto;
 import br.com.gew.domain.exception.EntityNotFoundException;
 import br.com.gew.domain.exception.ExceptionTratement;
@@ -34,6 +31,7 @@ public class ProjetoController {
     private DespesasUtils despesasUtils;
     private ProjetoContagemUtils projetoContagemUtils;
     private AlocadosUtils alocadosUtils;
+    private VerbaUtils verbaUtils;
 
     @PostMapping
     public ResponseEntity<ProjetoDataOutputDTO> cadastrar(
@@ -66,9 +64,31 @@ public class ProjetoController {
         return ResponseEntity.ok(projetoContagemUtils.contar());
     }
 
+    @GetMapping("/count/{dias}/{numeroDoProjeto}")
+    public ResponseEntity<List<VerbaUtilizadaPorDiaOutputDTO>> calcularVerbaUtilizadaPorDia(
+            @PathVariable int dias,
+            @PathVariable long numeroDoProjeto
+    ) throws ExceptionTratement {
+        return ResponseEntity.ok(verbaUtils.calcularVerbaUtilizadaPorDia(dias, numeroDoProjeto));
+    }
+
+    @GetMapping("/count/verba/{numeroDoProjeto}")
+    public ResponseEntity<VerbaUtilizadaOutputDTO> calcularVerbaUtilizada(
+            @PathVariable long numeroDoProjeto
+    ) throws ExceptionTratement {
+        return ResponseEntity.ok(verbaUtils.contarVerbaUtilizada(numeroDoProjeto));
+    }
+
     @GetMapping("/count/last-seven")
     public ResponseEntity<List<ProjetoConcluidosPorDiaOutputDTO>> contarUltimosDias() throws ExceptionTratement {
         return ResponseEntity.ok(projetoContagemUtils.concluidosUltimosDias());
+    }
+
+    @GetMapping("/horas/{numeroDoProjeto}")
+    public ResponseEntity<List<HorasApontadasOutputDTO>> horasApontadas(
+            @PathVariable long numeroDoProjeto
+    ) throws ExceptionTratement {
+        return ResponseEntity.ok(verbaUtils.horasApontadas(numeroDoProjeto));
     }
 
     @GetMapping("/{numeroDoProjeto}")

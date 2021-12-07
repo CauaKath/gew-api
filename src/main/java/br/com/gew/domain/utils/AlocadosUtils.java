@@ -1,9 +1,6 @@
 package br.com.gew.domain.utils;
 
-import br.com.gew.domain.entities.Alocado;
-import br.com.gew.domain.entities.AlocadoLog;
-import br.com.gew.domain.entities.Despesa;
-import br.com.gew.domain.entities.Projeto;
+import br.com.gew.domain.entities.*;
 import br.com.gew.domain.exception.ExceptionTratement;
 import br.com.gew.domain.services.*;
 import lombok.AllArgsConstructor;
@@ -22,6 +19,7 @@ public class AlocadosUtils {
     private DespesasService despesasService;
     private AlocadosLogsService alocadosLogsService;
     private LogHorasService logHorasService;
+    private FuncionariosService funcionariosService;
 
     public void alocarConsultor(
             long numeroDoProjeto,
